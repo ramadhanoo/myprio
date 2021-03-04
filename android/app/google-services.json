@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "675925968300",
+    "project_id": "myprio-e4eb9",
+    "storage_bucket": "myprio-e4eb9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675925968300:android:22551a8250af272a3c6609",
+        "android_client_info": {
+          "package_name": "com.myprio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "675925968300-m4ovdvl273jri4ut1h3nu9irre300hsa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myprio",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "675925968300-2107gnu5kkf327b9jh63521resq17rfm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2VgurCD0ICQzhpShMZhIaWav-izwK-Qg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "675925968300-2107gnu5kkf327b9jh63521resq17rfm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

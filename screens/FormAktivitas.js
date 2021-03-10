@@ -24,13 +24,13 @@ const IS_IPHONE_X = height === 812 || height === 896;
 const Form = Platform.OS === 'ios' ? (IS_IPHONE_X ? height * 0.35 : height * 0.45) : height * 0.45;
 const Safe = Platform.OS === 'ios' ? (IS_IPHONE_X ? 120 : 100) : 100;
 
-const FormJadwal = ({ navigation }) => {
+const FormJadwal = ({ navigation, route }) => {
 
     const [namaAktivitas, setNamaAktivitas] = useState("");
     const [notes, setNotes] = useState("nothing");
     const [tanggal, setTanggal] = useState("1");
     const [bulan, setBulan] = useState(1);
-    const [tahun, setTahun] = useState("1");
+    const [tahun, setTahun] = useState("2021");
     const [jam, setJam] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -48,13 +48,14 @@ const FormJadwal = ({ navigation }) => {
             Alert.alert("Peringatan", "tahun tidak boleh kosong")
         } else {
             setLoading(true)
-            axios.post(`http://${Ip}:3000/addAktivitas`, {
+            axios.post(`https://myprio.hefaistech.com/addAktivitas`, {
                 nama_aktivitas: namaAktivitas,
                 notes: notes,
                 tanggal: tanggal,
                 bulan: bulan,
                 tahun: tahun,
-                jam: jam
+                jam: jam,
+                id_user: route.params.id_user
             })
                 .then(async (response) => {
                     console.log(response)
@@ -87,12 +88,12 @@ const FormJadwal = ({ navigation }) => {
 
             <SafeAreaView style={{ width: width, height: height, backgroundColor: 'transparent', position: 'absolute' }}>
                 <ScrollView contentContainerStyle={{ width: width, justifyContent: 'center', alignItems: 'center', paddingBottom: 30 }}>
-                    <Text style={{ fontSize: 25, fontWeight: '500', color: '#fff', marginBottom: 30 }}>Create new schedule</Text>
+                    <Text style={{ fontSize: 25, fontWeight: '500', color: '#fff', marginBottom: 30 }}>Create new activity</Text>
                     <View style={{ width: '90%', backgroundColor: '#fff', borderRadius: 5, paddingTop: 15, paddingBottom: 15, paddingRight: 10, paddingLeft: 10 }}>
                         <Text style={{ fontSize: 19, fontWeight: '600', color: '#80ffdb', marginBottom: 10 }}>Activity name</Text>
                         <View style={{ width: '100%', height: 50, backgroundColor: '#f4f9f9', borderRadius: 8, flexDirection: 'row', paddingLeft: 8, marginBottom: 20 }}>
 
-                            <TextInput onChangeText={(namaAktivitas) => setNamaAktivitas(namaAktivitas)} style={{ backgroundColor: '#f4f9f9', width: '100%', height: '100%', fontSize: 15, color: '#808080' }} placeholder={"add schedule"} />
+                            <TextInput onChangeText={(namaAktivitas) => setNamaAktivitas(namaAktivitas)} style={{ backgroundColor: '#f4f9f9', width: '100%', height: '100%', fontSize: 15, color: '#808080' }} placeholder={"add activity"} />
                         </View>
 
                         <Text style={{ fontSize: 19, fontWeight: '600', color: '#80ffdb', marginBottom: 10 }}>Notes</Text>
@@ -143,7 +144,7 @@ const FormJadwal = ({ navigation }) => {
                                 <Picker.Item label="26" value="26" />
                                 <Picker.Item label="27" value="27" />
                                 <Picker.Item label="29" value="29" />
-                                <Picker.Item label="30" value="1" />
+                                <Picker.Item label="30" value="30" />
                                 <Picker.Item label="31" value="31" />
 
                             </Picker>

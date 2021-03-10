@@ -44,7 +44,7 @@ const Register = ({ navigation }) => {
             Alert.alert("Peringatan", "university tidak boleh kosong")
         } else {
             setLoading(true)
-            axios.post(`http://${Ip}:3000/registerAkun`, {
+            axios.post(`https://myprio.hefaistech.com/registerAkun`, {
                 username: username,
                 password: password,
                 fullname: fullname,

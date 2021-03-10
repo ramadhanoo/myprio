@@ -37,7 +37,7 @@ const Login = ({ navigation }) => {
             Alert.alert("Peringatan", "password tidak boleh kosong")
         } else {
             setLoading(true)
-            axios.post(`http://${Ip}:3000/login`, {
+            axios.post(`https://myprio.hefaistech.com/login`, {
                 username: username,
                 password: password
             })

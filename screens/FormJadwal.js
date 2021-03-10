@@ -24,7 +24,7 @@ const IS_IPHONE_X = height === 812 || height === 896;
 const Form = Platform.OS === 'ios' ? (IS_IPHONE_X ? height * 0.35 : height * 0.45) : height * 0.45;
 const Safe = Platform.OS === 'ios' ? (IS_IPHONE_X ? 120 : 100) : 100;
 
-const FormJadwal = ({ navigation }) => {
+const FormJadwal = ({ navigation, route }) => {
 
     const [jadwal, setJadwal] = useState("");
     const [notes, setNotes] = useState("");
@@ -47,19 +47,20 @@ const FormJadwal = ({ navigation }) => {
             Alert.alert("Peringatan", "time tidak boleh kosong")
         } else {
             setLoading(true)
-            axios.post(`http://${Ip}:3000/addJadwal`, {
+            axios.post(`https://myprio.hefaistech.com/addJadwal`, {
                 kode_kelas: jadwal,
                 nama_kelas: namaKelas,
                 notes: notes,
                 hari: day,
                 jam: time,
+                id_user: route.params.id_user
             })
                 .then(async (response) => {
                     console.log(response)
                     setLoading(false)
                     if (response.data != "gagal") {
                         Alert.alert("Success", "Data succesfull added")
-                        navigation.navigate("Jadwal");
+                        navigation.replace("Jadwal");
 
                     } else {
 

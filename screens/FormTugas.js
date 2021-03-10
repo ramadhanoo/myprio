@@ -24,12 +24,12 @@ const IS_IPHONE_X = height === 812 || height === 896;
 const Form = Platform.OS === 'ios' ? (IS_IPHONE_X ? height * 0.35 : height * 0.45) : height * 0.45;
 const Safe = Platform.OS === 'ios' ? (IS_IPHONE_X ? 120 : 100) : 100;
 
-const FormTugas = ({ navigation }) => {
+const FormTugas = ({ navigation, route }) => {
 
     const [notes, setNotes] = useState("nothing");
     const [tanggal, setTanggal] = useState("1");
     const [bulan, setBulan] = useState(1);
-    const [tahun, setTahun] = useState("1");
+    const [tahun, setTahun] = useState("2021");
     const [jam, setJam] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -45,12 +45,13 @@ const FormTugas = ({ navigation }) => {
             Alert.alert("Peringatan", "tahun tidak boleh kosong")
         } else {
             setLoading(true)
-            axios.post(`http://${Ip}:3000/addTugas`, {
+            axios.post(`https://myprio.hefaistech.com/addTugas`, {
                 notes: notes,
                 tanggal: tanggal,
                 bulan: bulan,
                 tahun: tahun,
-                jam: jam
+                jam: jam,
+                id_user: route.params.id_user
             })
                 .then(async (response) => {
                     console.log(response)

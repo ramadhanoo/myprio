@@ -16,7 +16,6 @@ import {
 import axios from 'axios';
 import { Ip } from '../data/Ip';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import RNPickerSelect from 'react-native-picker-select';
 
 
 
@@ -25,23 +24,27 @@ const IS_IPHONE_X = height === 812 || height === 896;
 const Form = Platform.OS === 'ios' ? (IS_IPHONE_X ? height * 0.35 : height * 0.45) : height * 0.45;
 const Safe = Platform.OS === 'ios' ? (IS_IPHONE_X ? 120 : 100) : 100;
 
-const Ujian = ({ navigation }) => {
+const Ujian = ({ navigation, }) => {
 
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState(true);
     const [error, setError] = useState("");
+    const [refreshing, setRefreshing] = useState(false);
+    const [ dataProfile, setDataProfile ] = useState();
 
 
     useEffect(() => {
         getData();
     }, [])
 
-    const [refreshing, setRefreshing] = useState(false);
 
-    const onRefresh = useCallback(() => {
+
+    const onRefresh = useCallback(async () => {
+        const jsonValue = await AsyncStorage.getItem('mahasiswa')
+        var profile =  JSON.parse(jsonValue);
         setRefreshing(true);
-        axios.post(`http://${Ip}:3000/getDataUjian`, {
-
+        axios.post(`https://myprio.hefaistech.com/getDataUjian`, {
+            id_user: profile.id_user
         })
             .then(async (response) => {
                 console.log(response)
@@ -75,7 +78,7 @@ const Ujian = ({ navigation }) => {
         console.log(diffDays + " days");
         console.log(date1)
         console.log(date2)
-        var hasil = diffDays + " days"
+        var hasil = `${tanggal}/${bulan}/${tahun}`
         return hasil;
 
         //console.log(date);
@@ -118,7 +121,7 @@ const Ujian = ({ navigation }) => {
                 },
                 {
                     text: "OK", onPress: () => {
-                        axios.post(`http://${Ip}:3000/hapusUjian`, {
+                        axios.post(`https://myprio.hefaistech.com/hapusUjian`, {
                             id_ujian: id,
                         })
                             .then(async (response) => {
@@ -153,15 +156,17 @@ const Ujian = ({ navigation }) => {
 
 
 
-    const getData = () => {
+    const getData = async() => {
+        const jsonValue = await AsyncStorage.getItem('mahasiswa')
+        var profile =  JSON.parse(jsonValue);
+        setDataProfile(profile)
 
-        axios.post(`http://${Ip}:3000/getDataUjian`, {
-
+        axios.post(`https://myprio.hefaistech.com/getDataUjian`, {
+            id_user: profile.id_user
         })
             .then(async (response) => {
                 console.log(response)
                 setLoading(false)
-
                 if (response.data == "gagal") {
                     setLoading(false)
                     //Alert.alert("Failed", "Incorrect username or password")
@@ -171,7 +176,6 @@ const Ujian = ({ navigation }) => {
                     console.log(response.data);
                     setData(response.data)
                 }
-
             })
             .catch((error) => {
                 console.log(error);
@@ -186,7 +190,7 @@ const Ujian = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
             <Image source={require('../images/ppl3.png')} style={[{ width: width * 0.4, height: 200, resizeMode: 'contain', backgroundColor: 'transparent' }]}></Image>
             <Text style={{ fontSize: 50, fontWeight: 'bold', color: '#0e918c' }}>Your Exam</Text>
-            <TouchableOpacity onPress={() => navigation.navigate("FormUjian")} style={{ width: '80%', height: 45, backgroundColor: '#0e918c', borderRadius: 10, marginTop: 20, justifyContent: 'center', alignItems: 'center' }}>
+            <TouchableOpacity onPress={() => navigation.navigate("FormUjian", { id_user: dataProfile.id_user })} style={{ width: '80%', height: 45, backgroundColor: '#0e918c', borderRadius: 10, marginTop: 20, justifyContent: 'center', alignItems: 'center' }}>
                 <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#fff' }}>Add your Exam</Text>
             </TouchableOpacity>
             <View style={{ width: '100%', alignItems: 'center', marginTop: 20, backgroundColor: 'transparent', height: height * 0.55 }}>

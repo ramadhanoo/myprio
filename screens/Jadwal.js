@@ -30,18 +30,24 @@ const Jadwal = ({ navigation }) => {
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState(true);
     const [error, setError] = useState("");
-
+    const [ dataProfile, setDataProfile ] = useState();
 
     useEffect(() => {
+        
+
         getData();
     }, [])
 
     const [refreshing, setRefreshing] = useState(false);
 
-    const onRefresh = useCallback(() => {
+    const onRefresh = useCallback(async() => {
         setRefreshing(true);
-        axios.post(`http://${Ip}:3000/getDataJadwal`, {
 
+        const jsonValue = await AsyncStorage.getItem('mahasiswa')
+        var profile =  JSON.parse(jsonValue);
+
+        axios.post(`https://myprio.hefaistech.com/getDataJadwal`, {
+            id_user:  profile.id_user,
         })
             .then(async (response) => {
                 console.log(response)
@@ -134,7 +140,7 @@ const Jadwal = ({ navigation }) => {
                 },
                 {
                     text: "OK", onPress: () => {
-                        axios.post(`http://${Ip}:3000/hapusJadwal`, {
+                        axios.post(`https://myprio.hefaistech.com/hapusJadwal`, {
                             id_jadwal: id,
                         })
                             .then(async (response) => {
@@ -168,10 +174,15 @@ const Jadwal = ({ navigation }) => {
     }
 
 
-    const getData = () => {
+    const getData = async() => {
 
-        axios.post(`http://${Ip}:3000/getDataJadwal`, {
+        const jsonValue = await AsyncStorage.getItem('mahasiswa')
+        var profile =  JSON.parse(jsonValue);
 
+        setDataProfile(profile)
+
+        axios.post(`https://myprio.hefaistech.com/getDataJadwal`, {
+            id_user: profile.id_user,
         })
             .then(async (response) => {
                 console.log(response)
@@ -201,7 +212,7 @@ const Jadwal = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
             <Image source={require('../images/ppl2.png')} style={[{ width: width * 0.4, height: 200, resizeMode: 'contain', backgroundColor: 'transparent' }]}></Image>
             <Text style={{ fontSize: 50, fontWeight: 'bold', color: '#0e918c' }}>Your Schedule</Text>
-            <TouchableOpacity onPress={() => navigation.navigate("FormJadwal")} style={{ width: '80%', height: 45, backgroundColor: '#0e918c', borderRadius: 10, marginTop: 20, justifyContent: 'center', alignItems: 'center' }}>
+            <TouchableOpacity onPress={() => navigation.navigate("FormJadwal", { id_user: dataProfile.id_user })} style={{ width: '80%', height: 45, backgroundColor: '#0e918c', borderRadius: 10, marginTop: 20, justifyContent: 'center', alignItems: 'center' }}>
                 <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#fff' }}>Add your Schedule</Text>
             </TouchableOpacity>
             <View style={{ width: '100%', alignItems: 'center', marginTop: 20, backgroundColor: 'transparent', height: height * 0.55 }}>

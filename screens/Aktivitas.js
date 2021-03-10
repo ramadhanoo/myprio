@@ -30,6 +30,7 @@ const Aktivitas = ({ navigation }) => {
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState(true);
     const [error, setError] = useState("");
+    const [ dataProfile, setDataProfile ] = useState();
 
 
     useEffect(() => {
@@ -38,10 +39,12 @@ const Aktivitas = ({ navigation }) => {
 
     const [refreshing, setRefreshing] = useState(false);
 
-    const onRefresh = useCallback(() => {
+    const onRefresh = useCallback(async() => {
         setRefreshing(true);
-        axios.post(`http://${Ip}:3000/getDataAktivitas`, {
-
+        const jsonValue = await AsyncStorage.getItem('mahasiswa')
+        var profile =  JSON.parse(jsonValue);
+        axios.post(`https://myprio.hefaistech.com/getDataAktivitas`, {
+            id_user: profile.id_user,
         })
             .then(async (response) => {
                 console.log(response)
@@ -75,7 +78,7 @@ const Aktivitas = ({ navigation }) => {
         console.log(diffDays + " days");
         console.log(date1)
         console.log(date2)
-        var hasil = diffDays + " days"
+        var hasil = `${tanggal}/${bulan}/${tahun}`
         return hasil;
 
         //console.log(date);
@@ -119,7 +122,7 @@ const Aktivitas = ({ navigation }) => {
                 },
                 {
                     text: "OK", onPress: () => {
-                        axios.post(`http://${Ip}:3000/hapusAktivitas`, {
+                        axios.post(`https://myprio.hefaistech.com/hapusAktivitas`, {
                             id_aktivitas: id,
                         })
                             .then(async (response) => {
@@ -152,10 +155,12 @@ const Aktivitas = ({ navigation }) => {
 
     }
 
-    const getData = () => {
-
-        axios.post(`http://${Ip}:3000/getDataAktivitas`, {
-
+    const getData = async() => {
+        const jsonValue = await AsyncStorage.getItem('mahasiswa')
+        var profile =  JSON.parse(jsonValue);
+        setDataProfile(profile)
+        axios.post(`https://myprio.hefaistech.com/getDataAktivitas`, {
+            id_user:  profile.id_user,
         })
             .then(async (response) => {
                 console.log(response)
@@ -185,7 +190,7 @@ const Aktivitas = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
             <Image source={require('../images/ppl.png')} style={[{ width: width * 0.4, height: 200, resizeMode: 'contain', backgroundColor: 'transparent' }]}></Image>
             <Text style={{ fontSize: 50, fontWeight: 'bold', color: '#0e918c' }}>Your Activities</Text>
-            <TouchableOpacity onPress={() => navigation.navigate("FormAktivitas")} style={{ width: '80%', height: 45, backgroundColor: '#0e918c', borderRadius: 10, marginTop: 20, justifyContent: 'center', alignItems: 'center' }}>
+            <TouchableOpacity onPress={() => navigation.navigate("FormAktivitas", { id_user: dataProfile.id_user })} style={{ width: '80%', height: 45, backgroundColor: '#0e918c', borderRadius: 10, marginTop: 20, justifyContent: 'center', alignItems: 'center' }}>
                 <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#fff' }}>Add your Activities</Text>
             </TouchableOpacity>
             <View style={{ width: '100%', alignItems: 'center', marginTop: 20, backgroundColor: 'transparent', height: height * 0.55 }}>

@@ -32,6 +32,114 @@ const Home = ({ navigation }) => {
     const [password, setPassword] = useState("");
     const [token, setToken] = useState("");
 
+
+    useEffect(() => {
+
+       testa();
+    }, [])
+
+
+    const testa = async() => {
+        const jsonValue = await AsyncStorage.getItem('mahasiswa')
+        var profile = JSON.parse(jsonValue);
+
+        
+
+        axios.post(`https://myprio.hefaistech.com/getDataJadwal`, {
+            id_user: profile.id_user,
+        })
+            .then(async (response) => {
+                console.log(response.data)
+                
+                
+                if (response.data == "gagal") {
+                   
+                } else {
+                    testingNotif(response.data)
+
+                }
+
+
+            })
+            .catch((error) => {
+                console.log(error);
+                
+            });
+
+
+
+
+        axios.post(`https://myprio.hefaistech.com/getDataAktivitas`, {
+            id_user: profile.id_user,
+        })
+            .then(async (response) => {
+                console.log(response.data)
+                //setRefreshing(false)
+                
+
+                if (response.data == "gagal") {
+                    //Alert.alert("Failed", "Incorrect username or password")
+                    //setData([])
+                } else {
+                    testingNotifAktivitas(response.data)
+
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+               
+            });
+
+
+
+
+        axios.post(`https://myprio.hefaistech.com/getDataUjian`, {
+            id_user: profile.id_user,
+        })
+            .then(async (response) => {
+                console.log(response.data)
+                
+
+                if (response.data == "gagal") {
+
+                } else {
+                    testingNotifUjian(response.data)
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+
+            });
+
+
+        axios.post(`https://myprio.hefaistech.com/getDataTugas`, {
+            id_user: profile.id_user,
+        })
+            .then(async (response) => {
+                console.log(response.data)
+                //setRefreshing(false)
+                
+                if (response.data == "gagal") {
+                    //Alert.alert("Failed", "Incorrect username or password")
+                    //setData([])
+                } else {
+                    testingNotifTugas(response.data)
+
+                }
+
+
+            })
+            .catch((error) => {
+                console.log(error);
+                //setRefreshing(false)
+                //setError("Network request failed")
+                //Alert.alert("No Internet Connection", "Please check your connection and try again");
+            });
+
+    }
+
+
+
     const signOut = async () => {
         try {
             await AsyncStorage.removeItem('mahasiswa')
@@ -41,37 +149,85 @@ const Home = ({ navigation }) => {
         }
     }
 
-    useEffect(() => {
-        axios.post(`http://${Ip}:3000/getDataJadwal`, {
-
-        })
-            .then(async (response) => {
-                console.log(response.data)
-                //setRefreshing(false)
-                testingNotif(response.data)
-                
-
-            })
-            .catch((error) => {
-                console.log(error);
-                //setRefreshing(false)
-                //setError("Network request failed")
-                Alert.alert("No Internet Connection", "Please check your connection and try again");
-            });
-
-        
-    }, [])
 
     const testingNotif = (data) => {
         data.map((item) => {
             var date = new Date();
             console.log(item)
 
-            if(item.hari == date.getDay()) {
+            if (item.hari == date.getDay()) {
                 PushNotification.localNotification({
                     title: "Jangan Lupa ada jadwal",
-                    message: "Ayo masuk kelas",
-         
+                    message: "Ayo masuk kelas"
+                })
+            }
+        })
+    }
+
+    const testingNotifAktivitas = (data) => {
+        console.log(data);
+
+        data.map((item) => {
+            var date = new Date();
+            var month = date.getUTCMonth(); //months from 1-12
+            var day = date.getUTCDate();
+            var year = date.getUTCFullYear();
+
+            var newdate = `${year}${month}${day}`;
+            var dateDb = `${item.tahun}${item.bulan}${item.tanggal}`
+            console.log(dateDb);
+            console.log(newdate);
+
+            if (newdate == dateDb) {
+                PushNotification.localNotification({
+                    title: "jangan lupa ada aktivitas",
+                    message: "Ayo jangan sampai ketinggalan"
+                })
+            }
+        })
+    }
+
+    const testingNotifTugas = (data) => {
+        console.log(data);
+
+        data.map((item) => {
+            var date = new Date();
+            var month = date.getUTCMonth(); //months from 1-12
+            var day = date.getUTCDate();
+            var year = date.getUTCFullYear();
+
+            var newdate = `${year}${month}${day}`;
+            var dateDb = `${item.tahun}${item.bulan}${item.tanggal}`
+            console.log(dateDb);
+            console.log(newdate);
+
+            if (newdate == dateDb) {
+                PushNotification.localNotification({
+                    title: "jangan lupa ada tugas hari ini",
+                    message: "Ayo jangan sampai ketinggalan"
+                })
+            }
+        })
+    }
+
+    const testingNotifUjian = (data) => {
+        console.log(data);
+
+        data.map((item) => {
+            var date = new Date();
+            var month = date.getUTCMonth(); //months from 1-12
+            var day = date.getUTCDate();
+            var year = date.getUTCFullYear();
+
+            var newdate = `${year}${month}${day}`;
+            var dateDb = `${item.tahun}${item.bulan}${item.tanggal}`
+            console.log(dateDb);
+            console.log(newdate);
+
+            if (newdate == dateDb) {
+                PushNotification.localNotification({
+                    title: "jangan lupa ada ujian hari ini",
+                    message: "Ayo jangan sampai ketinggalan"
                 })
             }
         })
@@ -95,16 +251,16 @@ const Home = ({ navigation }) => {
     }
 
 
-   const testPush = () => {
+    const testPush = () => {
 
-       PushNotification.localNotification({
-           title: "Test",
-           message: "My Notification Message",
+        PushNotification.localNotification({
+            title: "Jangan Lupa ada jadwal",
+            message: "Ayo masuk kelas",
 
-       })
+        })
 
 
-   }
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -118,26 +274,26 @@ const Home = ({ navigation }) => {
                         <View style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 20, width: '100%', height: '80%', backgroundColor: '#fff', borderTopRightRadius: 20, borderTopLeftRadius: 20, flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                             <TouchableOpacity onPress={() => navigation.navigate("Jadwal")} style={{ width: '45%', height: 120, borderRadius: 10, backgroundColor: '#008891', padding: 20, justifyContent: 'space-between' }}>
                                 <Image source={require('../images/schedule.png')} style={{ width: 30, height: 40 }} />
-                                <Text style={{ fontSize: 16, color: '#fff' }}>Schedule</Text>
+                                <Text style={{ fontSize: 12, color: '#fff' }}>Schedule</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => navigation.navigate("Tugas")} style={{ width: '45%', height: 120, borderRadius: 10, backgroundColor: '#931a25', padding: 20, justifyContent: 'space-between' }}>
                                 <Image source={require('../images/activity.png')} style={{ width: 40, height: 50 }} />
-                                <Text style={{ fontSize: 16, color: '#fff' }}>Assignment</Text>
+                                <Text style={{ fontSize: 12, color: '#fff' }}>Assignment</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity onPress={() => navigation.navigate("Aktivitas")} style={{ width: '45%', height: 120, borderRadius: 10, backgroundColor: '#931a25', marginTop: 20, padding: 20, justifyContent: 'space-between' }}>
                                 <Image source={require('../images/activity.png')} style={{ width: 40, height: 50 }} />
-                                <Text style={{ fontSize: 16, color: '#fff' }}>Activity</Text>
+                                <Text style={{ fontSize: 12, color: '#fff' }}>Activity</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => navigation.navigate("Ujian")} style={{ width: '45%', height: 120, borderRadius: 10, backgroundColor: '#008891', marginTop: 20, padding: 20, justifyContent: 'space-between' }}>
                                 <Image source={require('../images/exam.png')} style={{ width: 40, height: 30 }} />
-                                <Text style={{ fontSize: 16, color: '#fff' }}>Exam</Text>
+                                <Text style={{ fontSize: 12, color: '#fff' }}>Exam</Text>
                             </TouchableOpacity>
 
                         </View>
                         <View style={{ width: '100%', alignItems: 'center', height: '20%', marginTop: 10 }}>
                             <TouchableOpacity onPress={() => testPush()} style={{ width: '80%', height: 40, borderRadius: 10, backgroundColor: '#008891', justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#fff' }}>Sign out</Text>
+                                <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#fff' }}>Sign out</Text>
                             </TouchableOpacity>
                         </View>
 
